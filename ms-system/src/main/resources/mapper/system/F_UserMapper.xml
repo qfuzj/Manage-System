@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.system.mapper.F_UserMapper">
+    
+    <resultMap type="F_User" id="F_UserResult">
+        <result property="userId"    column="user_id"    />
+        <result property="username"    column="username"    />
+        <result property="password"    column="password"    />
+    </resultMap>
+
+    <resultMap id="F_UserUserDetailResult" type="F_User" extends="F_UserResult">
+        <collection property="userDetailList" notNullColumn="sub_ud_id" javaType="java.util.List" resultMap="UserDetailResult" />
+    </resultMap>
+
+    <resultMap type="UserDetail" id="UserDetailResult">
+        <result property="udId"    column="sub_ud_id"    />
+        <result property="userId"    column="sub_user_id"    />
+        <result property="email"    column="sub_email"    />
+        <result property="phone"    column="sub_phone"    />
+    </resultMap>
+
+    <sql id="selectF_UserVo">
+        select user_id, username, password from user
+    </sql>
+
+    <select id="selectF_UserList" parameterType="F_User" resultMap="F_UserResult">
+        <include refid="selectF_UserVo"/>
+        <where>  
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectF_UserByUserId" parameterType="Long" resultMap="F_UserUserDetailResult">
+        select a.user_id, a.username, a.password,
+ b.ud_id as sub_ud_id, b.user_id as sub_user_id, b.email as sub_email, b.phone as sub_phone
+        from user a
+        left join user_detail b on b.user_id = a.user_id
+        where a.user_id = #{userId}
+    </select>
+        
+    <insert id="insertF_User" parameterType="F_User" useGeneratedKeys="true" keyProperty="userId">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">username,</if>
+            <if test="password != null and password != ''">password,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="password != null and password != ''">#{password},</if>
+         </trim>
+    </insert>
+
+    <update id="updateF_User" parameterType="F_User">
+        update user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteF_UserByUserId" parameterType="Long">
+        delete from user where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteF_UserByUserIds" parameterType="String">
+        delete from user where user_id in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteUserDetailByUserIds" parameterType="String">
+        delete from user_detail where user_id in 
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteUserDetailByUserId" parameterType="Long">
+        delete from user_detail where user_id = #{userId}
+    </delete>
+
+    <insert id="batchUserDetail">
+        insert into user_detail( ud_id, user_id, email, phone) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.udId}, #{item.userId}, #{item.email}, #{item.phone})
+        </foreach>
+    </insert>
+</mapper>
