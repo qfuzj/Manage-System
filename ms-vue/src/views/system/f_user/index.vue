@@ -78,7 +78,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改前台列表对话框 -->
+    <!-- 添加或修改前台用户对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="f_userRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="用户名" prop="username">
@@ -88,7 +88,7 @@
           <el-input v-model="form.password" placeholder="请输入密码" />
         </el-form-item>
 <!--        <el-divider content-position="center">${subTable.functionName}信息</el-divider>-->
-        <el-divider content-position="center">{{ subTableTitle }}信息</el-divider>
+        <el-divider content-position="center">用户详情信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button type="primary" icon="Plus" @click="handleAddUserDetail">添加</el-button>
@@ -141,7 +141,6 @@ const title = ref("");
 
 const data = reactive({
   form: {},
-  subTableTitle: "用户详情",
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -157,9 +156,9 @@ const data = reactive({
   }
 });
 
-const { queryParams, form, rules, subTableTitle } = toRefs(data);
+const { queryParams, form, rules } = toRefs(data);
 
-/** 查询前台列表列表 */
+/** 查询前台用户列表 */
 function getList() {
   loading.value = true;
   listF_user(queryParams.value).then(response => {
@@ -209,7 +208,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加前台列表";
+  title.value = "添加前台用户";
 }
 
 /** 修改按钮操作 */
@@ -220,7 +219,7 @@ function handleUpdate(row) {
     form.value = response.data;
     userDetailList.value = response.data.userDetailList;
     open.value = true;
-    title.value = "修改前台列表";
+    title.value = "修改前台用户";
   });
 }
 
@@ -249,7 +248,7 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _userIds = row.userId || ids.value;
-  proxy.$modal.confirm('是否确认删除前台列表编号为"' + _userIds + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除前台用户编号为"' + _userIds + '"的数据项？').then(function() {
     return delF_user(_userIds);
   }).then(() => {
     getList();
@@ -273,8 +272,7 @@ function handleAddUserDetail() {
 /** ${subTable.functionName}删除按钮操作 */
 function handleDeleteUserDetail() {
   if (checkedUserDetail.value.length == 0) {
-    // proxy.$modal.msgError("请先选择要删除的${subTable.functionName}数据");
-    proxy.$modal.msgError(`请先选择要删除的${subTableTitle.value}数据`);
+    proxy.$modal.msgError("请先选择要删除的${subTable.functionName}数据");
   } else {
     const userDetails = userDetailList.value;
     const checkedUserDetails = checkedUserDetail.value;

@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询前台列表列表
+// 查询前台用户列表
 export function listF_user(query) {
   return request({
     url: '/system/f_user/list',
@@ -9,7 +9,7 @@ export function listF_user(query) {
   })
 }
 
-// 查询前台列表详细
+// 查询前台用户详细
 export function getF_user(userId) {
   return request({
     url: '/system/f_user/' + userId,
@@ -17,7 +17,7 @@ export function getF_user(userId) {
   })
 }
 
-// 新增前台列表
+// 新增前台用户
 export function addF_user(data) {
   return request({
     url: '/system/f_user',
@@ -26,7 +26,7 @@ export function addF_user(data) {
   })
 }
 
-// 修改前台列表
+// 修改前台用户
 export function updateF_user(data) {
   return request({
     url: '/system/f_user',
@@ -35,7 +35,7 @@ export function updateF_user(data) {
   })
 }
 
-// 删除前台列表
+// 删除前台用户
 export function delF_user(userId) {
   return request({
     url: '/system/f_user/' + userId,

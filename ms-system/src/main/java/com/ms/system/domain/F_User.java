@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ms.common.annotation.Excel;
 
 /**
- * 前台列表对象 user
+ * 前台用户对象 user
  *
  * @author ms
  * @date 2026-05-11

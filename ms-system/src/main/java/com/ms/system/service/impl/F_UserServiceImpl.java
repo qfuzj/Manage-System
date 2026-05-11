@@ -12,7 +12,7 @@ import com.ms.system.domain.F_User;
 import com.ms.system.service.IF_UserService;
 
 /**
- * 前台列表Service业务层处理
+ * 前台用户Service业务层处理
  * 
  * @author ms
  * @date 2026-05-11
@@ -24,10 +24,10 @@ public class F_UserServiceImpl implements IF_UserService
     private F_UserMapper f_UserMapper;
 
     /**
-     * 查询前台列表
+     * 查询前台用户
      * 
-     * @param userId 前台列表主键
-     * @return 前台列表
+     * @param userId 前台用户主键
+     * @return 前台用户
      */
     @Override
     public F_User selectF_UserByUserId(Long userId)
@@ -36,10 +36,10 @@ public class F_UserServiceImpl implements IF_UserService
     }
 
     /**
-     * 查询前台列表列表
+     * 查询前台用户列表
      * 
-     * @param f_User 前台列表
-     * @return 前台列表
+     * @param f_User 前台用户
+     * @return 前台用户
      */
     @Override
     public List<F_User> selectF_UserList(F_User f_User)
@@ -48,9 +48,9 @@ public class F_UserServiceImpl implements IF_UserService
     }
 
     /**
-     * 新增前台列表
+     * 新增前台用户
      * 
-     * @param f_User 前台列表
+     * @param f_User 前台用户
      * @return 结果
      */
     @Transactional
@@ -63,9 +63,9 @@ public class F_UserServiceImpl implements IF_UserService
     }
 
     /**
-     * 修改前台列表
+     * 修改前台用户
      * 
-     * @param f_User 前台列表
+     * @param f_User 前台用户
      * @return 结果
      */
     @Transactional
@@ -78,9 +78,9 @@ public class F_UserServiceImpl implements IF_UserService
     }
 
     /**
-     * 批量删除前台列表
+     * 批量删除前台用户
      * 
-     * @param userIds 需要删除的前台列表主键
+     * @param userIds 需要删除的前台用户主键
      * @return 结果
      */
     @Transactional
@@ -92,9 +92,9 @@ public class F_UserServiceImpl implements IF_UserService
     }
 
     /**
-     * 删除前台列表信息
+     * 删除前台用户信息
      * 
-     * @param userId 前台列表主键
+     * @param userId 前台用户主键
      * @return 结果
      */
     @Transactional
@@ -108,7 +108,7 @@ public class F_UserServiceImpl implements IF_UserService
     /**
      * 新增${subTable.functionName}信息
      * 
-     * @param f_User 前台列表对象
+     * @param f_User 前台用户对象
      */
     public void insertUserDetail(F_User f_User)
     {

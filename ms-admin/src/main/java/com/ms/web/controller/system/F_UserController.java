@@ -22,7 +22,7 @@ import com.ms.common.utils.poi.ExcelUtil;
 import com.ms.common.core.page.TableDataInfo;
 
 /**
- * 前台列表Controller
+ * 前台用户Controller
  *
  * @author ms
  * @date 2026-05-11
@@ -35,7 +35,7 @@ public class F_UserController extends BaseController
     private IF_UserService f_UserService;
 
     /**
-     * 查询前台列表列表
+     * 查询前台用户列表
      */
     @PreAuthorize("@ss.hasPermi('system:f_user:list')")
     @GetMapping("/list")
@@ -47,20 +47,20 @@ public class F_UserController extends BaseController
     }
 
     /**
-     * 导出前台列表列表
+     * 导出前台用户列表
      */
     @PreAuthorize("@ss.hasPermi('system:f_user:export')")
-    @Log(title = "前台列表", businessType = BusinessType.EXPORT)
+    @Log(title = "前台用户", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, F_User f_User)
     {
         List<F_User> list = f_UserService.selectF_UserList(f_User);
         ExcelUtil<F_User> util = new ExcelUtil<F_User>(F_User.class);
-        util.exportExcel(response, list, "前台列表数据");
+        util.exportExcel(response, list, "前台用户数据");
     }
 
     /**
-     * 获取前台列表详细信息
+     * 获取前台用户详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:f_user:query')")
     @GetMapping(value = "/{userId}")
@@ -70,10 +70,10 @@ public class F_UserController extends BaseController
     }
 
     /**
-     * 新增前台列表
+     * 新增前台用户
      */
     @PreAuthorize("@ss.hasPermi('system:f_user:add')")
-    @Log(title = "前台列表", businessType = BusinessType.INSERT)
+    @Log(title = "前台用户", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody F_User f_User)
     {
@@ -81,10 +81,10 @@ public class F_UserController extends BaseController
     }
 
     /**
-     * 修改前台列表
+     * 修改前台用户
      */
     @PreAuthorize("@ss.hasPermi('system:f_user:edit')")
-    @Log(title = "前台列表", businessType = BusinessType.UPDATE)
+    @Log(title = "前台用户", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody F_User f_User)
     {
@@ -92,10 +92,10 @@ public class F_UserController extends BaseController
     }
 
     /**
-     * 删除前台列表
+     * 删除前台用户
      */
     @PreAuthorize("@ss.hasPermi('system:f_user:remove')")
-    @Log(title = "前台列表", businessType = BusinessType.DELETE)
+    @Log(title = "前台用户", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{userIds}")
     public AjaxResult remove(@PathVariable Long[] userIds)
     {
