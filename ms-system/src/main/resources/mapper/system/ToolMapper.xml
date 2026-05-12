@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.system.mapper.ToolMapper">
+    
+    <resultMap type="Tool" id="ToolResult">
+        <result property="id"    column="id"    />
+        <result property="toolCode"    column="tool_code"    />
+        <result property="toolName"    column="tool_name"    />
+        <result property="toolTypeId"    column="tool_type_id"    />
+        <result property="brand"    column="brand"    />
+        <result property="spec"    column="spec"    />
+        <result property="qty"    column="qty"    />
+        <result property="qtyAvail"    column="qty_avail"    />
+        <result property="status"    column="status"    />
+        <result property="nextMaintenDate"    column="next_mainten_date"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectToolVo">
+        select id, tool_code, tool_name, tool_type_id, brand, spec, qty, qty_avail, status, next_mainten_date, remark, create_time, update_time, is_deleted from base_tool
+    </sql>
+
+    <select id="selectToolList" parameterType="Tool" resultMap="ToolResult">
+        <include refid="selectToolVo"/>
+        <where>  
+            <if test="toolCode != null  and toolCode != ''"> and tool_code = #{toolCode}</if>
+            <if test="toolName != null  and toolName != ''"> and tool_name like concat('%', #{toolName}, '%')</if>
+            <if test="brand != null  and brand != ''"> and brand = #{brand}</if>
+            <if test="nextMaintenDate != null "> and next_mainten_date = #{nextMaintenDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectToolById" parameterType="Long" resultMap="ToolResult">
+        <include refid="selectToolVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTool" parameterType="Tool" useGeneratedKeys="true" keyProperty="id">
+        insert into base_tool
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="toolCode != null and toolCode != ''">tool_code,</if>
+            <if test="toolName != null and toolName != ''">tool_name,</if>
+            <if test="toolTypeId != null">tool_type_id,</if>
+            <if test="brand != null">brand,</if>
+            <if test="spec != null">spec,</if>
+            <if test="qty != null">qty,</if>
+            <if test="qtyAvail != null">qty_avail,</if>
+            <if test="status != null">status,</if>
+            <if test="nextMaintenDate != null">next_mainten_date,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="toolCode != null and toolCode != ''">#{toolCode},</if>
+            <if test="toolName != null and toolName != ''">#{toolName},</if>
+            <if test="toolTypeId != null">#{toolTypeId},</if>
+            <if test="brand != null">#{brand},</if>
+            <if test="spec != null">#{spec},</if>
+            <if test="qty != null">#{qty},</if>
+            <if test="qtyAvail != null">#{qtyAvail},</if>
+            <if test="status != null">#{status},</if>
+            <if test="nextMaintenDate != null">#{nextMaintenDate},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTool" parameterType="Tool">
+        update base_tool
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="toolCode != null and toolCode != ''">tool_code = #{toolCode},</if>
+            <if test="toolName != null and toolName != ''">tool_name = #{toolName},</if>
+            <if test="toolTypeId != null">tool_type_id = #{toolTypeId},</if>
+            <if test="brand != null">brand = #{brand},</if>
+            <if test="spec != null">spec = #{spec},</if>
+            <if test="qty != null">qty = #{qty},</if>
+            <if test="qtyAvail != null">qty_avail = #{qtyAvail},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="nextMaintenDate != null">next_mainten_date = #{nextMaintenDate},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteToolById" parameterType="Long">
+        delete from base_tool where id = #{id}
+    </delete>
+
+    <delete id="deleteToolByIds" parameterType="String">
+        delete from base_tool where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
