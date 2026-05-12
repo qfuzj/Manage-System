@@ -79,7 +79,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="客户编码" align="center" prop="code">
         <template #default="scope">
-          <el-button link type="primary" @click="handleUpdate(scope.row)">{{ scope.row.code }}</el-button>
+          <el-button link type="primary" @click="handleView(scope.row)">{{ scope.row.code }}</el-button>
         </template>
       </el-table-column>
       <el-table-column label="客户名称" align="center" prop="name" />
@@ -112,7 +112,7 @@
 
     <!-- 添加或修改客户对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="customerRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="customerRef" :model="form" :rules="rules" label-width="80px" :disabled="dialogMode === 'view'">
         <el-form-item label="客户编码" prop="code">
           <el-input v-model="form.code" placeholder="请输入客户编码" />
         </el-form-item>
@@ -149,7 +149,7 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button v-if="dialogMode !== 'view'" type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
         </div>
       </template>
@@ -172,6 +172,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const dialogMode = ref("edit");
 
 const data = reactive({
   form: {
@@ -213,6 +214,7 @@ function getList() {
 function cancel() {
   open.value = false;
   reset();
+  dialogMode.value = "edit";
 }
 
 // 表单重置
@@ -257,6 +259,7 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+  dialogMode.value = "add";
   open.value = true;
   title.value = "添加客户";
 }
@@ -264,6 +267,7 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
+  dialogMode.value = "edit";
   const _id = row.id || ids.value;
   getCustomer(_id).then(response => {
     form.value = response.data;
@@ -273,18 +277,31 @@ function handleUpdate(row) {
   });
 }
 
+function handleView(row) {
+  reset();
+  dialogMode.value = "view";
+  const _id = row.id;
+  getCustomer(_id).then(response => {
+    form.value = response.data;
+    form.value.status = form.value.status != null ? Number(form.value.status) : 0;
+    open.value = true;
+    title.value = "查看客户";
+  });
+}
+
 /** 提交按钮 */
 function submitForm() {
+  if (dialogMode.value === "view") return;
   proxy.$refs["customerRef"].validate(valid => {
     if (valid) {
       if (form.value.id != null) {
-        updateCustomer(form.value).then(response => {
+        updateCustomer(form.value).then(() => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addCustomer(form.value).then(response => {
+        addCustomer(form.value).then(() => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();

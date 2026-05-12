@@ -55,7 +55,7 @@ export const constantRoutes = [
     path: '/userRegister',
     component: () => import('@/views/userRegister')
   },
-  
+
   {
     path: "/:pathMatch(.*)*",
     component: () => import('@/views/error/404'),

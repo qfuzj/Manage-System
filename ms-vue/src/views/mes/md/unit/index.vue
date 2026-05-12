@@ -77,7 +77,11 @@
 
     <el-table v-loading="loading" :data="unitList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="单位编码" align="center" prop="code" />
+      <el-table-column label="单位编码" align="center" prop="code">
+        <template #default="scope">
+          <el-button link type="primary" @click="handleView(scope.row)">{{ scope.row.code }}</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="单位名称" align="center" prop="name" />
       <el-table-column label="单位描述" align="center" prop="description" />
       <el-table-column label="是否主单位" align="center" prop="isMainUnit">
@@ -110,7 +114,7 @@
 
     <!-- 添加或修改计量单位对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form ref="unitRef" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="unitRef" :model="form" :rules="rules" label-width="100px" :disabled="dialogMode === 'view'">
         <el-form-item label="单位编码" prop="code">
           <el-input v-model="form.code" placeholder="请输入单位编码" />
         </el-form-item>
@@ -158,7 +162,7 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button v-if="dialogMode !== 'view'" type="primary" @click="submitForm">确 定</el-button>
           <el-button @click="cancel">取 消</el-button>
         </div>
       </template>
@@ -182,6 +186,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const dialogMode = ref("edit");
 
 const data = reactive({
   form: {},
@@ -246,6 +251,7 @@ function handleIsMainUnitChange(value) {
 function cancel() {
   open.value = false;
   reset();
+  dialogMode.value = "edit";
 }
 
 // 表单重置
@@ -289,14 +295,15 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   getMainUnitList();
+  dialogMode.value = "add";
   open.value = true;
   title.value = "添加计量单位";
 }
 
-/** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
   getMainUnitList();
+  dialogMode.value = "edit";
   const _id = row.id || ids.value
   getUnit(_id).then(response => {
     form.value = response.data;
@@ -307,8 +314,22 @@ function handleUpdate(row) {
   });
 }
 
-/** 提交按钮 */
+function handleView(row) {
+  reset();
+  getMainUnitList();
+  dialogMode.value = "view";
+  const _id = row.id;
+  getUnit(_id).then(response => {
+    form.value = response.data;
+    form.value.isMainUnit = form.value.isMainUnit != null ? String(form.value.isMainUnit) : null;
+    form.value.status = Number(form.value.status);
+    open.value = true;
+    title.value = "查看计量单位";
+  });
+}
+
 function submitForm() {
+  if (dialogMode.value === "view") return;
   proxy.$refs["unitRef"].validate(valid => {
     if (valid) {
       form.value.isMainUnit = form.value.isMainUnit != null ? String(form.value.isMainUnit) : null;
