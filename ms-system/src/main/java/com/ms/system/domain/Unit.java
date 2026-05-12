@@ -32,8 +32,8 @@ public class Unit extends BaseEntity
     @Excel(name = "单位描述")
     private String description;
 
-    /** 是否主单位(0:否,1:是) */
-    @Excel(name = "是否主单位(0:否,1:是)")
+    /** 是否主单位(0:是,1:否) */
+    @Excel(name = "是否主单位(0:是,1:否)")
     private Integer isMainUnit;
 
     /** 主单位编号 */
@@ -47,6 +47,9 @@ public class Unit extends BaseEntity
     /** 是否启用 */
     @Excel(name = "是否启用")
     private Integer status;
+
+    /** 主单位名称（用于显示，不映射数据库） */
+    private String mainUnitName;
 
     /** 删除标记 */
     private Long deleteFlag;
@@ -131,6 +134,16 @@ public class Unit extends BaseEntity
     public Long getDeleteFlag()
     {
         return deleteFlag;
+    }
+
+    public String getMainUnitName()
+    {
+        return mainUnitName;
+    }
+
+    public void setMainUnitName(String mainUnitName)
+    {
+        this.mainUnitName = mainUnitName;
     }
 
     @Override

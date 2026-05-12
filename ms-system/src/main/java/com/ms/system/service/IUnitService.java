@@ -53,9 +53,16 @@ public interface IUnitService
 
     /**
      * 删除计量单位信息
-     * 
+     *
      * @param id 计量单位主键
      * @return 结果
      */
     public int deleteUnitById(Long id);
+
+    /**
+     * 查询主单位列表
+     *
+     * @return 主单位列表
+     */
+    public List<Unit> selectMainUnitList();
 }

@@ -53,9 +53,16 @@ public interface UnitMapper
 
     /**
      * 批量删除计量单位
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteUnitByIds(Long[] ids);
+
+    /**
+     * 查询主单位列表
+     *
+     * @return 主单位列表
+     */
+    public List<Unit> selectMainUnitList();
 }

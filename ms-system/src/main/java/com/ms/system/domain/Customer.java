@@ -50,8 +50,8 @@ public class Customer extends BaseEntity
     @Excel(name = "客户描述")
     private String description;
 
-    /** 是否启用(0:禁用,1:启用) */
-    @Excel(name = "是否启用(0:禁用,1:启用)")
+    /** 是否启用(0:启用,1:禁用) */
+    @Excel(name = "是否启用(0:启用,1:禁用)")
     private Integer status;
 
     /** 删除标记 */

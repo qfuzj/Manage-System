@@ -42,3 +42,11 @@ export function delUnit(id) {
     method: 'delete'
   })
 }
+
+// 获取主单位列表
+export function listMainUnit() {
+  return request({
+    url: '/system/unit/mainUnitList',
+    method: 'get'
+  })
+}

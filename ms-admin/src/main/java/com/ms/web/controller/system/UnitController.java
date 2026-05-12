@@ -101,4 +101,14 @@ public class UnitController extends BaseController
     {
         return toAjax(unitService.deleteUnitByIds(ids));
     }
+
+    /**
+     * 获取主单位列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:unit:list')")
+    @GetMapping("/mainUnitList")
+    public AjaxResult getMainUnitList()
+    {
+        return success(unitService.selectMainUnitList());
+    }
 }

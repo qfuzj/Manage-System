@@ -11,6 +11,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="description"    column="description"    />
         <result property="isMainUnit"    column="is_main_unit"    />
         <result property="mainUnitId"    column="main_unit_id"    />
+        <result property="mainUnitName"    column="main_unit_name"    />
         <result property="conversionRatio"    column="conversion_ratio"    />
         <result property="status"    column="status"    />
         <result property="createTime"    column="create_time"    />
@@ -19,21 +20,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectUnitVo">
-        select id, code, name, description, is_main_unit, main_unit_id, conversion_ratio, status, create_time, update_time, delete_flag from unit
+        select u.id, u.code, u.name, u.description, u.is_main_unit, u.main_unit_id, u.conversion_ratio, u.status, u.create_time, u.update_time, u.delete_flag,
+               m.name as main_unit_name
+        from unit u
+        left join unit m on u.main_unit_id = m.id
     </sql>
 
     <select id="selectUnitList" parameterType="Unit" resultMap="UnitResult">
         <include refid="selectUnitVo"/>
-        <where>  
-            <if test="code != null  and code != ''"> and code = #{code}</if>
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="status != null "> and status = #{status}</if>
+        <where>
+            <if test="code != null  and code != ''"> and u.code = #{code}</if>
+            <if test="name != null  and name != ''"> and u.name like concat('%', #{name}, '%')</if>
+            <if test="status != null "> and u.status = #{status}</if>
         </where>
     </select>
     
     <select id="selectUnitById" parameterType="Long" resultMap="UnitResult">
         <include refid="selectUnitVo"/>
-        where id = #{id}
+        where u.id = #{id}
     </select>
         
     <insert id="insertUnit" parameterType="Unit">
@@ -88,9 +92,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteUnitByIds" parameterType="String">
-        delete from unit where id in 
+        delete from unit where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectMainUnitList" resultMap="UnitResult">
+        select u.id, u.code, u.name, u.description, u.is_main_unit, u.main_unit_id, u.conversion_ratio, u.status, u.create_time, u.update_time, u.delete_flag
+        from unit u
+        where u.is_main_unit = 0 and u.status = 0
+        order by u.id
+    </select>
 </mapper>

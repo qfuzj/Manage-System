@@ -80,8 +80,12 @@
       <el-table-column label="单位编码" align="center" prop="code" />
       <el-table-column label="单位名称" align="center" prop="name" />
       <el-table-column label="单位描述" align="center" prop="description" />
-      <el-table-column label="是否主单位" align="center" prop="isMainUnit" />
-      <el-table-column label="主单位编号" align="center" prop="mainUnitId" />
+      <el-table-column label="是否主单位" align="center" prop="isMainUnit">
+        <template #default="scope">
+          <dict-tag :options="common_yes_no" :value="String(scope.row.isMainUnit)"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="主单位" align="center" prop="mainUnitName" />
       <el-table-column label="换算比例" align="center" prop="conversionRatio" />
       <el-table-column label="是否启用" align="center" prop="status">
         <template #default="scope">
@@ -105,8 +109,8 @@
     />
 
     <!-- 添加或修改计量单位对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="unitRef" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+      <el-form ref="unitRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="单位编码" prop="code">
           <el-input v-model="form.code" placeholder="请输入单位编码" />
         </el-form-item>
@@ -117,20 +121,31 @@
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="是否主单位" prop="isMainUnit">
-          <el-radio-group v-model="form.isMainUnit">
+          <el-radio-group v-model="form.isMainUnit" @change="handleIsMainUnitChange">
             <el-radio
-              v-for="dict in unit_main_yes_no"
+              v-for="dict in common_yes_no"
               :key="dict.value"
               :label="dict.value"
             >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="主单位编号" prop="mainUnitId">
-          <el-input v-model="form.mainUnitId" placeholder="请输入主单位编号" />
-        </el-form-item>
-        <el-form-item label="换算比例" prop="conversionRatio">
-          <el-input v-model="form.conversionRatio" placeholder="请输入换算比例" />
-        </el-form-item>
+        <!-- 非主单位时显示主单位和换算比例 -->
+        <template v-if="form.isMainUnit === '1'">
+          <el-form-item label="主单位" prop="mainUnitId">
+            <el-select v-model="form.mainUnitId" placeholder="请选择主单位" clearable style="width: 150px;">
+              <el-option
+                v-for="item in mainUnitList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="换算比例" prop="conversionRatio">
+            <el-input v-model.number="form.conversionRatio" type="number" :min="0" placeholder="请输入换算比例" style="width: 150px;" @focus="(e) => e.target.select()" />
+            <span class="form-tip">（1个{{ form.mainUnitId ? mainUnitList.find(m => m.id === form.mainUnitId)?.name : '主单位' }} = ?个当前单位）</span>
+          </el-form-item>
+        </template>
         <el-form-item label="是否启用" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio
@@ -152,13 +167,13 @@
 </template>
 
 <script setup name="Unit">
-import { listUnit, getUnit, delUnit, addUnit, updateUnit } from "@/api/mes/md/unit";
+import { listUnit, getUnit, delUnit, addUnit, updateUnit, listMainUnit } from "@/api/mes/md/unit";
 
 const { proxy } = getCurrentInstance();
 const { common_yes_no } = proxy.useDict('common_yes_no');
-const { unit_main_yes_no } = proxy.useDict('unit_main_yes_no');
 
 const unitList = ref([]);
+const mainUnitList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -185,7 +200,13 @@ const data = reactive({
       { required: true, message: "单位名称不能为空", trigger: "blur" }
     ],
     isMainUnit: [
-      { required: true, message: "是否主单位(0:否,1:是)不能为空", trigger: "change" }
+      { required: true, message: "是否主单位不能为空", trigger: "change" }
+    ],
+    mainUnitId: [
+      { required: true, message: "请选择主单位", trigger: "change" }
+    ],
+    conversionRatio: [
+      { required: true, message: "请输入换算比例", trigger: "blur" }
     ],
     status: [
       { required: true, message: "是否启用不能为空", trigger: "change" }
@@ -205,6 +226,22 @@ function getList() {
   });
 }
 
+/** 获取主单位列表 */
+function getMainUnitList() {
+  listMainUnit().then(response => {
+    mainUnitList.value = response.data || [];
+  });
+}
+
+/** 是否主单位变更 */
+function handleIsMainUnitChange(value) {
+  if (value === '0') {
+    // 选为主单位时，清空主单位和换算比例
+    form.value.mainUnitId = null;
+    form.value.conversionRatio = 0;
+  }
+}
+
 // 取消按钮
 function cancel() {
   open.value = false;
@@ -220,8 +257,8 @@ function reset() {
     description: null,
     isMainUnit: null,
     mainUnitId: null,
-    conversionRatio: null,
-    status: null,
+    conversionRatio: 0,
+    status: 0,
     createTime: null,
     updateTime: null,
     deleteFlag: null
@@ -251,6 +288,7 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+  getMainUnitList();
   open.value = true;
   title.value = "添加计量单位";
 }
@@ -258,6 +296,7 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
+  getMainUnitList();
   const _id = row.id || ids.value
   getUnit(_id).then(response => {
     form.value = response.data;
@@ -310,4 +349,13 @@ function handleExport() {
 }
 
 getList();
+getMainUnitList();
 </script>
+
+<style scoped>
+.form-tip {
+  margin-left: 10px;
+  color: #909399;
+  font-size: 12px;
+}
+</style>
