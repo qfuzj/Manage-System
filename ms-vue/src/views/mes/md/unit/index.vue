@@ -20,7 +20,7 @@
       <el-form-item label="是否启用" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择是否启用" clearable>
           <el-option
-            v-for="dict in sys_common_status"
+            v-for="dict in common_yes_no"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -85,7 +85,7 @@
       <el-table-column label="换算比例" align="center" prop="conversionRatio" />
       <el-table-column label="是否启用" align="center" prop="status">
         <template #default="scope">
-          <dict-tag :options="sys_common_status" :value="scope.row.status"/>
+          <dict-tag :options="common_yes_no" :value="scope.row.status"/>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -134,7 +134,7 @@
         <el-form-item label="是否启用" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio
-              v-for="dict in sys_common_status"
+              v-for="dict in common_yes_no"
               :key="dict.value"
               :label="parseInt(dict.value)"
             >{{dict.label}}</el-radio>
@@ -155,7 +155,7 @@
 import { listUnit, getUnit, delUnit, addUnit, updateUnit } from "@/api/mes/md/unit";
 
 const { proxy } = getCurrentInstance();
-const { sys_common_status } = proxy.useDict('sys_common_status');
+const { common_yes_no } = proxy.useDict('common_yes_no');
 const { unit_main_yes_no } = proxy.useDict('unit_main_yes_no');
 
 const unitList = ref([]);

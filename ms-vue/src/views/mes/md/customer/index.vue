@@ -20,10 +20,10 @@
       <el-form-item label="是否启用" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择" clearable style="width: 100px">
           <el-option
-            v-for="dict in sys_yes_no"
+            v-for="dict in common_yes_no"
             :key="dict.value"
             :label="dict.label"
-            :value="dict.value"
+            :value="parseInt(dict.value)"
           />
         </el-select>
       </el-form-item>
@@ -91,7 +91,7 @@
       <el-table-column label="客户描述" align="center" prop="description" />
       <el-table-column label="是否启用" align="center" prop="status">
         <template #default="scope">
-          <dict-tag :options="sys_yes_no" :value="scope.row.status"/>
+          <dict-tag :options="common_yes_no" :value="scope.row.status"/>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -140,9 +140,9 @@
         <el-form-item label="是否启用" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio
-              v-for="dict in sys_yes_no"
+              v-for="dict in common_yes_no"
               :key="dict.value"
-              :label="dict.value"
+              :label="parseInt(dict.value)"
             >{{dict.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -161,7 +161,7 @@
 import { listCustomer, getCustomer, delCustomer, addCustomer, updateCustomer } from "@/api/mes/md/customer";
 
 const { proxy } = getCurrentInstance();
-const { sys_yes_no } = proxy.useDict('sys_yes_no');
+const { common_yes_no } = proxy.useDict('common_yes_no');
 
 const customerList = ref([]);
 const open = ref(false);
@@ -174,7 +174,9 @@ const total = ref(0);
 const title = ref("");
 
 const data = reactive({
-  form: {},
+  form: {
+    status: 0,
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -225,7 +227,7 @@ function reset() {
     fax: null,
     email: null,
     description: null,
-    status: null,
+    status: 0,
     createTime: null,
     updateTime: null,
     deleteFlag: null
@@ -248,8 +250,8 @@ function resetQuery() {
 // 多选框选中数据
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id);
-  single.value = selection.length != 1;
-  multiple.value = !selection.length;
+  single.value = selection.length !== 1;
+  multiple.value = selection.length === 0;
 }
 
 /** 新增按钮操作 */
@@ -265,6 +267,7 @@ function handleUpdate(row) {
   const _id = row.id || ids.value;
   getCustomer(_id).then(response => {
     form.value = response.data;
+    form.value.status = form.value.status != null ? Number(form.value.status) : 0;
     open.value = true;
     title.value = "修改客户";
   });
