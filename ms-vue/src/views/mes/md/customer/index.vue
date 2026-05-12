@@ -77,8 +77,11 @@
 
     <el-table v-loading="loading" :data="customerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="客户编号" align="center" prop="id" />
-      <el-table-column label="客户编码" align="center" prop="code" />
+      <el-table-column label="客户编码" align="center" prop="code">
+        <template #default="scope">
+          <el-button link type="primary" @click="handleUpdate(scope.row)">{{ scope.row.code }}</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="客户名称" align="center" prop="name" />
       <el-table-column label="客户地址" align="center" prop="address" />
       <el-table-column label="客户联系人" align="center" prop="contactPerson" />
@@ -155,7 +158,7 @@
 </template>
 
 <script setup name="Customer">
-import { listCustomer, getCustomer, delCustomer, addCustomer, updateCustomer } from "@/api/system/customer";
+import { listCustomer, getCustomer, delCustomer, addCustomer, updateCustomer } from "@/api/mes/md/customer";
 
 const { proxy } = getCurrentInstance();
 const { sys_yes_no } = proxy.useDict('sys_yes_no');
@@ -259,7 +262,7 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const _id = row.id || ids.value
+  const _id = row.id || ids.value;
   getCustomer(_id).then(response => {
     form.value = response.data;
     open.value = true;

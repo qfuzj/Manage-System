@@ -85,8 +85,11 @@
 
     <el-table v-loading="loading" :data="supplierList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="供应商编号" align="center" prop="id" />
-      <el-table-column label="供应商编码" align="center" prop="code" />
+      <el-table-column label="供应商编码" align="center" prop="code">
+        <template #default="scope">
+          <el-button link type="primary" @click="handleUpdate(scope.row)">{{ scope.row.code }}</el-button>
+        </template>
+      </el-table-column>
       <el-table-column label="供应商名称" align="center" prop="name" />
       <el-table-column label="供应商地址" align="center" prop="address" />
       <el-table-column label="供应商联系人" align="center" prop="contactPerson" />
@@ -163,7 +166,7 @@
 </template>
 
 <script setup name="Supplier">
-import { listSupplier, getSupplier, delSupplier, addSupplier, updateSupplier } from "@/api/system/supplier";
+import { listSupplier, getSupplier, delSupplier, addSupplier, updateSupplier } from "@/api/mes/md/supplier";
 
 const { proxy } = getCurrentInstance();
 const { sys_common_status } = proxy.useDict('sys_common_status');
@@ -271,8 +274,6 @@ function handleUpdate(row) {
   getSupplier(_id).then(response => {
     reset();
     form.value = response.data;
-    // 确保status类型为字符串，与单选按钮标签类型保持一致
-    form.value.status = String(form.value.status);
     open.value = true;
     title.value = "修改供应商";
   });

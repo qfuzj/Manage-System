@@ -77,7 +77,6 @@
 
     <el-table v-loading="loading" :data="unitList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="单位编号" align="center" prop="id" />
       <el-table-column label="单位编码" align="center" prop="code" />
       <el-table-column label="单位名称" align="center" prop="name" />
       <el-table-column label="单位描述" align="center" prop="description" />
@@ -262,7 +261,7 @@ function handleUpdate(row) {
   const _id = row.id || ids.value
   getUnit(_id).then(response => {
     form.value = response.data;
-    form.value.isMainUnit = String(form.value.isMainUnit);
+    form.value.isMainUnit = form.value.isMainUnit != null ? String(form.value.isMainUnit) : null;
     form.value.status = Number(form.value.status);
     open.value = true;
     title.value = "修改计量单位";
