@@ -111,49 +111,51 @@
       @pagination="getList"
     />
 
-    <el-dialog v-model="employeePickerOpen" title="选择员工" width="900px" top="5vh" append-to-body>
-      <el-form :model="employeeQueryParams" ref="employeeQueryRef" :inline="true" label-width="68px">
-        <el-form-item label="姓名" prop="empName">
-          <el-input v-model="employeeQueryParams.empName" placeholder="请输入姓名" clearable @keyup.enter="handleEmployeeQuery" />
-        </el-form-item>
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="employeeQueryParams.phone" placeholder="请输入手机号" clearable @keyup.enter="handleEmployeeQuery" />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="Search" @click="handleEmployeeQuery">搜索</el-button>
-          <el-button icon="Refresh" @click="resetEmployeeQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-      <el-table
-        v-loading="employeeLoading"
-        :data="employeeList"
-        height="360"
-        @current-change="handleEmployeeCurrentChange"
-        :row-key="getEmployeeRowKey"
-        highlight-current-row
-      >
-        <el-table-column label="选择" width="70" align="center">
-          <template #default="scope">
-            <el-radio :model-value="selectedEmployeeId" :label="getEmployeeRowKey(scope.row)">{{ '' }}</el-radio>
-          </template>
-        </el-table-column>
-        <el-table-column label="姓名" prop="empName" :show-overflow-tooltip="true" />
-        <el-table-column label="昵称" prop="nickname" :show-overflow-tooltip="true" />
-        <el-table-column label="手机号" prop="phone" :show-overflow-tooltip="true" />
-        <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />
-        <el-table-column label="在职状态" align="center" prop="status">
-          <template #default="scope">
-            <dict-tag :options="common_yes_no" :value="scope.row.status" />
-          </template>
-        </el-table-column>
-      </el-table>
-      <pagination v-show="employeeTotal > 0" :total="employeeTotal" v-model:page="employeeQueryParams.pageNum" v-model:limit="employeeQueryParams.pageSize" @pagination="getEmployeeList" />
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="confirmEmployeeSelect">确 定</el-button>
-          <el-button @click="employeePickerOpen = false">取 消</el-button>
-        </div>
-      </template>
+    <el-dialog v-model="employeePickerOpen" :title="employeePickerTitle" width="980px" top="5vh" append-to-body>
+      <el-card shadow="never" class="employee-picker-card">
+        <el-form :model="employeeQueryParams" ref="employeeQueryRef" :inline="true" label-width="68px">
+          <el-form-item label="姓名" prop="empName">
+            <el-input v-model="employeeQueryParams.empName" placeholder="请输入姓名" clearable @keyup.enter="handleEmployeeQuery" />
+          </el-form-item>
+          <el-form-item label="手机号" prop="phone">
+            <el-input v-model="employeeQueryParams.phone" placeholder="请输入手机号" clearable @keyup.enter="handleEmployeeQuery" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="Search" @click="handleEmployeeQuery">搜索</el-button>
+            <el-button icon="Refresh" @click="resetEmployeeQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table
+          v-loading="employeeLoading"
+          :data="employeeList"
+          height="360"
+          @current-change="handleEmployeeCurrentChange"
+          :row-key="getEmployeeRowKey"
+          highlight-current-row
+        >
+          <el-table-column label="选择" width="70" align="center">
+            <template #default="scope">
+              <el-radio :model-value="selectedEmployeeId" :label="getEmployeeRowKey(scope.row)" />
+            </template>
+          </el-table-column>
+          <el-table-column label="姓名" prop="empName" :show-overflow-tooltip="true" />
+          <el-table-column label="昵称" prop="nickname" :show-overflow-tooltip="true" />
+          <el-table-column label="手机号" prop="phone" :show-overflow-tooltip="true" />
+          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />
+          <el-table-column label="在职状态" align="center" prop="status">
+            <template #default="scope">
+              <dict-tag :options="common_yes_no" :value="scope.row.status" />
+            </template>
+          </el-table-column>
+        </el-table>
+        <pagination v-show="employeeTotal > 0" :total="employeeTotal" v-model:page="employeeQueryParams.pageNum" v-model:limit="employeeQueryParams.pageSize" @pagination="getEmployeeList" />
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button type="primary" @click="confirmEmployeeSelect">确 定</el-button>
+            <el-button @click="employeePickerOpen = false">取 消</el-button>
+          </div>
+        </template>
+      </el-card>
     </el-dialog>
 
     <!-- 添加或修改车间对话框 -->
@@ -223,6 +225,7 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const dialogMode = ref("edit");
+const employeePickerTitle = ref("选择员工");
 
 const data = reactive({
   form: {},
@@ -320,7 +323,7 @@ function resetQuery() {
 // 多选框选中数据
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id);
-  single.value = selection.length != 1;
+  single.value = selection.length !== 1;
   multiple.value = !selection.length;
 }
 
@@ -462,8 +465,16 @@ function reset() {
   };
   selectedEmployee.value = null;
   employeeIds.value = [];
+  selectedEmployeeId.value = null;
   proxy.resetForm("workshopRef");
 }
 
 getList();
 </script>
+
+<style scoped>
+.employee-picker-card {
+  border: none;
+}
+</style>
+
