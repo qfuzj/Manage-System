@@ -3,81 +3,155 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ms.system.mapper.MdItemMapper">
-    
+
     <resultMap type="MdItem" id="MdItemResult">
-        <result property="itemId"    column="item_id"    />
-        <result property="itemCode"    column="item_code"    />
-        <result property="itemName"    column="item_name"    />
-        <result property="specification"    column="specification"    />
-        <result property="unitOfMeasure"    column="unit_of_measure"    />
-        <result property="unitName"    column="unit_name"    />
-        <result property="itemOrProduct"    column="item_or_product"    />
-        <result property="itemTypeId"    column="item_type_id"    />
-        <result property="itemTypeCode"    column="item_type_code"    />
-        <result property="itemTypeName"    column="item_type_name"    />
-        <result property="enableFlag"    column="enable_flag"    />
-        <result property="safeStockFlag"    column="safe_stock_flag"    />
-        <result property="minStock"    column="min_stock"    />
-        <result property="maxStock"    column="max_stock"    />
-        <result property="highValue"    column="high_value"    />
-        <result property="batchFlag"    column="batch_flag"    />
-        <result property="remark"    column="remark"    />
-        <result property="attr1"    column="attr1"    />
-        <result property="attr2"    column="attr2"    />
-        <result property="attr3"    column="attr3"    />
-        <result property="attr4"    column="attr4"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="itemId" column="item_id" />
+        <result property="itemCode" column="item_code" />
+        <result property="itemName" column="item_name" />
+        <result property="specification" column="specification" />
+        <result property="unitOfMeasure" column="unit_of_measure" />
+        <result property="unitName" column="unit_name" />
+        <result property="itemOrProduct" column="item_or_product" />
+        <result property="itemTypeId" column="item_type_id" />
+        <result property="itemTypeCode" column="item_type_code" />
+        <result property="itemTypeName" column="item_type_name" />
+        <result property="enableFlag" column="enable_flag" />
+        <result property="safeStockFlag" column="safe_stock_flag" />
+        <result property="minStock" column="min_stock" />
+        <result property="maxStock" column="max_stock" />
+        <result property="highValue" column="high_value" />
+        <result property="batchFlag" column="batch_flag" />
+        <result property="remark" column="remark" />
+        <result property="attr1" column="attr1" />
+        <result property="attr2" column="attr2" />
+        <result property="attr3" column="attr3" />
+        <result property="attr4" column="attr4" />
+        <result property="createBy" column="create_by" />
+        <result property="createTime" column="create_time" />
+        <result property="updateBy" column="update_by" />
+        <result property="updateTime" column="update_time" />
     </resultMap>
 
-    <resultMap id="MdItemProductSopResult" type="MdItem" extends="MdItemResult">
-        <collection property="productSopList" notNullColumn="sub_sop_id" javaType="java.util.List" resultMap="ProductSopResult" />
+    <!-- 新增：SOP 子表嵌套查询映射 -->
+    <resultMap id="MdItemWithSubTablesResult" type="MdItem" extends="MdItemResult">
+        <collection property="productSopList" column="item_id" select="selectProductSopByItemId" />
+        <collection property="mdItemBomList" column="item_id" select="selectMdItemBomByItemId" />
+        <collection property="mdItemSipList" column="item_id" select="selectMdItemSipByItemId" />
     </resultMap>
 
+    <!-- 新增：SOP 子表 resultMap -->
     <resultMap type="ProductSop" id="ProductSopResult">
-        <result property="sopId"    column="sub_sop_id"    />
-        <result property="itemId"    column="sub_item_id"    />
-        <result property="orderNum"    column="sub_order_num"    />
-        <result property="processId"    column="sub_process_id"    />
-        <result property="processCode"    column="sub_process_code"    />
-        <result property="processName"    column="sub_process_name"    />
-        <result property="sopTitle"    column="sub_sop_title"    />
-        <result property="sopDescription"    column="sub_sop_description"    />
-        <result property="sopUrl"    column="sub_sop_url"    />
-        <result property="remark"    column="sub_remark"    />
-        <result property="attr1"    column="sub_attr1"    />
-        <result property="attr2"    column="sub_attr2"    />
-        <result property="attr3"    column="sub_attr3"    />
-        <result property="attr4"    column="sub_attr4"    />
-        <result property="createBy"    column="sub_create_by"    />
-        <result property="createTime"    column="sub_create_time"    />
-        <result property="updateBy"    column="sub_update_by"    />
-        <result property="updateTime"    column="sub_update_time"    />
+        <result property="sopId" column="sop_id" />
+        <result property="itemId" column="item_id" />
+        <result property="orderNum" column="order_num" />
+        <result property="processId" column="process_id" />
+        <result property="processCode" column="process_code" />
+        <result property="processName" column="process_name" />
+        <result property="sopTitle" column="sop_title" />
+        <result property="sopDescription" column="sop_description" />
+        <result property="sopUrl" column="sop_url" />
+        <result property="remark" column="remark" />
+        <result property="attr1" column="attr1" />
+        <result property="attr2" column="attr2" />
+        <result property="attr3" column="attr3" />
+        <result property="attr4" column="attr4" />
+        <result property="createBy" column="create_by" />
+        <result property="createTime" column="create_time" />
+        <result property="updateBy" column="update_by" />
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <!-- 新增：BOM 子表 resultMap -->
+    <resultMap type="MdProductBom" id="MdItemBomResult">
+        <result property="bomId" column="bom_id" />
+        <result property="itemId" column="item_id" />
+        <result property="bomItemId" column="bom_item_id" />
+        <result property="bomItemCode" column="bom_item_code" />
+        <result property="bomItemName" column="bom_item_name" />
+        <result property="bomItemSpec" column="bom_item_spec" />
+        <result property="unitOfMeasure" column="unit_of_measure" />
+        <result property="itemOrProduct" column="item_or_product" />
+        <result property="quantity" column="quantity" />
+        <result property="enableFlag" column="enable_flag" />
+        <result property="remark" column="remark" />
+        <result property="attr1" column="attr1" />
+        <result property="attr2" column="attr2" />
+        <result property="attr3" column="attr3" />
+        <result property="attr4" column="attr4" />
+        <result property="createBy" column="create_by" />
+        <result property="createTime" column="create_time" />
+        <result property="updateBy" column="update_by" />
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <!-- 新增：SIP 子表 resultMap -->
+    <resultMap type="ProductSip" id="MdItemSipResult">
+        <result property="sipId" column="sip_id" />
+        <result property="itemId" column="item_id" />
+        <result property="orderNum" column="order_num" />
+        <result property="processId" column="process_id" />
+        <result property="processCode" column="process_code" />
+        <result property="processName" column="process_name" />
+        <result property="sipTitle" column="sip_title" />
+        <result property="sipDescription" column="sip_description" />
+        <result property="sipUrl" column="sip_url" />
+        <result property="remark" column="remark" />
+        <result property="createBy" column="create_by" />
+        <result property="createTime" column="create_time" />
+        <result property="updateBy" column="update_by" />
+        <result property="updateTime" column="update_time" />
     </resultMap>
 
     <sql id="selectMdItemVo">
-        select item_id, item_code, item_name, specification, unit_of_measure, unit_name, item_or_product, item_type_id, item_type_code, item_type_name, enable_flag, safe_stock_flag, min_stock, max_stock, high_value, batch_flag, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time from md_item
+        select item_id, item_code, item_name, specification, unit_of_measure, unit_name, item_or_product,
+               item_type_id, item_type_code, item_type_name, enable_flag, safe_stock_flag, min_stock, max_stock,
+               high_value, batch_flag, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time
+        from md_item
     </sql>
 
     <select id="selectMdItemList" parameterType="MdItem" resultMap="MdItemResult">
-        <include refid="selectMdItemVo"/>
-        <where>  
-            <if test="itemCode != null  and itemCode != ''"> and item_code = #{itemCode}</if>
-            <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
-            <if test="enableFlag != null  and enableFlag != ''"> and enable_flag = #{enableFlag}</if>
+        <include refid="selectMdItemVo" />
+        <where>
+            <if test="itemCode != null and itemCode != ''">and item_code = #{itemCode}</if>
+            <if test="itemName != null and itemName != ''">and item_name like concat('%', #{itemName}, '%')</if>
+            <if test="enableFlag != null and enableFlag != ''">and enable_flag = #{enableFlag}</if>
         </where>
     </select>
-    
-    <select id="selectMdItemByItemId" parameterType="Long" resultMap="MdItemProductSopResult">
-        select a.item_id, a.item_code, a.item_name, a.specification, a.unit_of_measure, a.unit_name, a.item_or_product, a.item_type_id, a.item_type_code, a.item_type_name, a.enable_flag, a.safe_stock_flag, a.min_stock, a.max_stock, a.high_value, a.batch_flag, a.remark, a.attr1, a.attr2, a.attr3, a.attr4, a.create_by, a.create_time, a.update_by, a.update_time,
- b.sop_id as sub_sop_id, b.item_id as sub_item_id, b.order_num as sub_order_num, b.process_id as sub_process_id, b.process_code as sub_process_code, b.process_name as sub_process_name, b.sop_title as sub_sop_title, b.sop_description as sub_sop_description, b.sop_url as sub_sop_url, b.remark as sub_remark, b.attr1 as sub_attr1, b.attr2 as sub_attr2, b.attr3 as sub_attr3, b.attr4 as sub_attr4, b.create_by as sub_create_by, b.create_time as sub_create_time, b.update_by as sub_update_by, b.update_time as sub_update_time
-        from md_item a
-        left join md_product_sop b on b.item_id = a.item_id
-        where a.item_id = #{itemId}
+
+    <!-- 新增：主表详情改为嵌套 select，避免多子表笛卡尔积 -->
+    <select id="selectMdItemByItemId" parameterType="Long" resultMap="MdItemWithSubTablesResult">
+        <include refid="selectMdItemVo" />
+        where item_id = #{itemId}
     </select>
-        
+
+    <!-- 新增：SOP 子表独立查询 -->
+    <select id="selectProductSopByItemId" parameterType="Long" resultMap="ProductSopResult">
+        select sop_id, item_id, order_num, process_id, process_code, process_name, sop_title, sop_description,
+               sop_url, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time
+        from md_product_sop
+        where item_id = #{itemId}
+        order by order_num asc, sop_id asc
+    </select>
+
+    <!-- 新增：BOM 子表独立查询 -->
+    <select id="selectMdItemBomByItemId" parameterType="Long" resultMap="MdItemBomResult">
+        select bom_id, item_id, bom_item_id, bom_item_code, bom_item_name, bom_item_spec, unit_of_measure,
+               item_or_product, quantity, enable_flag, remark, attr1, attr2, attr3, attr4,
+               create_by, create_time, update_by, update_time
+        from md_product_bom
+        where item_id = #{itemId}
+        order by bom_id asc
+    </select>
+
+    <!-- 新增：SIP 子表独立查询 -->
+    <select id="selectMdItemSipByItemId" parameterType="Long" resultMap="MdItemSipResult">
+        select sip_id, item_id, order_num, process_id, process_code, process_name, sip_title, sip_description,
+               sip_url, remark, create_by, create_time, update_by, update_time
+        from md_product_sip
+        where item_id = #{itemId}
+        order by order_num asc, sip_id asc
+    </select>
+
     <insert id="insertMdItem" parameterType="MdItem" useGeneratedKeys="true" keyProperty="itemId">
         insert into md_item
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -105,7 +179,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="itemCode != null and itemCode != ''">#{itemCode},</if>
             <if test="itemName != null and itemName != ''">#{itemName},</if>
@@ -131,7 +205,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateMdItem" parameterType="MdItem">
@@ -170,14 +244,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteMdItemByItemIds" parameterType="String">
-        delete from md_item where item_id in 
+        delete from md_item where item_id in
         <foreach item="itemId" collection="array" open="(" separator="," close=")">
             #{itemId}
         </foreach>
     </delete>
-    
+
     <delete id="deleteProductSopByItemIds" parameterType="String">
-        delete from md_product_sop where item_id in 
+        delete from md_product_sop where item_id in
         <foreach item="itemId" collection="array" open="(" separator="," close=")">
             #{itemId}
         </foreach>
@@ -187,10 +261,67 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from md_product_sop where item_id = #{itemId}
     </delete>
 
+    <!-- 新增：BOM 子表按主表批量删除 -->
+    <delete id="deleteMdItemBomByItemIds" parameterType="String">
+        delete from md_product_bom where item_id in
+        <foreach item="itemId" collection="array" open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+    </delete>
+
+    <!-- 新增：BOM 子表按主表删除 -->
+    <delete id="deleteMdItemBomByItemId" parameterType="Long">
+        delete from md_product_bom where item_id = #{itemId}
+    </delete>
+
+    <!-- 新增：SIP 子表按主表批量删除 -->
+    <delete id="deleteMdItemSipByItemIds" parameterType="String">
+        delete from md_product_sip where item_id in
+        <foreach item="itemId" collection="array" open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+    </delete>
+
+    <!-- 新增：SIP 子表按主表删除 -->
+    <delete id="deleteMdItemSipByItemId" parameterType="Long">
+        delete from md_product_sip where item_id = #{itemId}
+    </delete>
+
     <insert id="batchProductSop">
-        insert into md_product_sop( sop_id, item_id, order_num, process_id, process_code, process_name, sop_title, sop_description, sop_url, remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time) values
-		<foreach item="item" index="index" collection="list" separator=",">
-            ( #{item.sopId}, #{item.itemId}, #{item.orderNum}, #{item.processId}, #{item.processCode}, #{item.processName}, #{item.sopTitle}, #{item.sopDescription}, #{item.sopUrl}, #{item.remark}, #{item.attr1}, #{item.attr2}, #{item.attr3}, #{item.attr4}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime})
+        insert into md_product_sop
+        (sop_id, item_id, order_num, process_id, process_code, process_name, sop_title, sop_description, sop_url,
+         remark, attr1, attr2, attr3, attr4, create_by, create_time, update_by, update_time)
+        values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.sopId}, #{item.itemId}, #{item.orderNum}, #{item.processId}, #{item.processCode}, #{item.processName},
+             #{item.sopTitle}, #{item.sopDescription}, #{item.sopUrl}, #{item.remark}, #{item.attr1}, #{item.attr2},
+             #{item.attr3}, #{item.attr4}, #{item.createBy}, #{item.createTime}, #{item.updateBy}, #{item.updateTime})
+        </foreach>
+    </insert>
+
+    <!-- 新增：BOM 子表批量插入 -->
+    <insert id="batchMdItemBom">
+        insert into md_product_bom
+        (bom_id, item_id, bom_item_id, bom_item_code, bom_item_name, bom_item_spec, unit_of_measure, quantity,
+         remark, create_by, create_time, update_by, update_time)
+        values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.bomId}, #{item.itemId}, #{item.bomItemId}, #{item.bomItemCode}, #{item.bomItemName},
+             #{item.bomItemSpec}, #{item.unitOfMeasure}, #{item.quantity}, #{item.remark}, #{item.createBy},
+             #{item.createTime}, #{item.updateBy}, #{item.updateTime})
+        </foreach>
+    </insert>
+
+    <!-- 新增：SIP 子表批量插入 -->
+    <insert id="batchMdItemSip">
+        insert into md_product_sip
+        (sip_id, item_id, order_num, process_id, process_code, process_name, sip_title, sip_description, sip_url,
+         remark, create_by, create_time, update_by, update_time)
+        values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.sipId}, #{item.itemId}, #{item.orderNum}, #{item.processId}, #{item.processCode}, #{item.processName},
+             #{item.sipTitle}, #{item.sipDescription}, #{item.sipUrl}, #{item.remark}, #{item.createBy},
+             #{item.createTime}, #{item.updateBy}, #{item.updateTime})
         </foreach>
     </insert>
 </mapper>

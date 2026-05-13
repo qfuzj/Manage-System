@@ -96,6 +96,12 @@ public class MdItem extends BaseEntity
     /** 产品SOP信息 */
     private List<ProductSop> productSopList;
 
+    /** 新增：产品BOM信息 */
+    private List<MdProductBom> mdItemBomList;
+
+    /** 新增：产品SIP信息 */
+    private List<ProductSip> mdItemSipList;
+
     public void setItemId(Long itemId)
     {
         this.itemId = itemId;
@@ -287,6 +293,30 @@ public class MdItem extends BaseEntity
         this.productSopList = productSopList;
     }
 
+    // 新增
+    public List<MdProductBom> getMdItemBomList()
+    {
+        return mdItemBomList;
+    }
+
+    // 新增
+    public void setMdItemBomList(List<MdProductBom> mdItemBomList)
+    {
+        this.mdItemBomList = mdItemBomList;
+    }
+
+    // 新增
+    public List<ProductSip> getMdItemSipList()
+    {
+        return mdItemSipList;
+    }
+
+    // 新增
+    public void setMdItemSipList(List<ProductSip> mdItemSipList)
+    {
+        this.mdItemSipList = mdItemSipList;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -316,6 +346,8 @@ public class MdItem extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("productSopList", getProductSopList())
+            .append("mdItemBomList", getMdItemBomList())
+            .append("mdItemSipList", getMdItemSipList())
             .toString();
     }
 }

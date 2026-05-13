@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询产品SOP列表
+// 查询物料产品列表
 export function listMditem(query) {
   return request({
     url: '/mes:md/mditem/list',
@@ -9,15 +9,15 @@ export function listMditem(query) {
   })
 }
 
-// 查询产品SOP详细
-export function getMditem(sopId) {
+// 查询物料产品详细
+export function getMditem(itemId) {
   return request({
-    url: '/mes:md/mditem/' + sopId,
+    url: '/mes:md/mditem/' + itemId,
     method: 'get'
   })
 }
 
-// 新增产品SOP
+// 新增物料产品
 export function addMditem(data) {
   return request({
     url: '/mes:md/mditem',
@@ -26,7 +26,7 @@ export function addMditem(data) {
   })
 }
 
-// 修改产品SOP
+// 修改物料产品
 export function updateMditem(data) {
   return request({
     url: '/mes:md/mditem',
@@ -35,10 +35,10 @@ export function updateMditem(data) {
   })
 }
 
-// 删除产品SOP
-export function delMditem(sopId) {
+// 删除物料产品
+export function delMditem(itemId) {
   return request({
-    url: '/mes:md/mditem/' + sopId,
+    url: '/mes:md/mditem/' + itemId,
     method: 'delete'
   })
 }
