@@ -132,10 +132,15 @@
           @current-change="handleEmployeeCurrentChange"
           :row-key="getEmployeeRowKey"
           highlight-current-row
+          border
         >
           <el-table-column label="选择" width="70" align="center">
             <template #default="scope">
-              <el-radio :model-value="selectedEmployeeId" :label="getEmployeeRowKey(scope.row)" />
+              <el-radio
+                :model-value="selectedEmployeeId"
+                :label="getEmployeeRowKey(scope.row)"
+                @change="() => handleEmployeeSelect(scope.row)"
+              />
             </template>
           </el-table-column>
           <el-table-column label="姓名" prop="empName" :show-overflow-tooltip="true" />
@@ -178,7 +183,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="form.status">
+          <el-radio-group v-model="form.status" :disabled="dialogMode === 'view'">
             <el-radio
               v-for="dict in common_yes_no"
               :key="dict.value"
@@ -402,6 +407,7 @@ function handleExport() {
 
 function openEmployeePicker() {
   selectedEmployeeId.value = form.value.managerId || null;
+  selectedEmployee.value = null;
   employeePickerOpen.value = true;
   getEmployeeList();
 }
@@ -416,6 +422,12 @@ function resetEmployeeQuery() {
   handleEmployeeQuery();
 }
 
+function handleEmployeeSelect(row) {
+  if (!row) return;
+  selectedEmployee.value = row;
+  selectedEmployeeId.value = getEmployeeRowKey(row);
+}
+
 function handleEmployeeCurrentChange(currentRow) {
   if (!currentRow) {
     employeeIds.value = [];
@@ -423,10 +435,8 @@ function handleEmployeeCurrentChange(currentRow) {
     selectedEmployeeId.value = null;
     return;
   }
-  const id = currentRow.userId || currentRow.id;
-  employeeIds.value = [id];
-  selectedEmployee.value = currentRow;
-  selectedEmployeeId.value = id;
+  handleEmployeeSelect(currentRow);
+  employeeIds.value = [selectedEmployeeId.value];
 }
 
 function confirmEmployeeSelect() {
@@ -434,7 +444,7 @@ function confirmEmployeeSelect() {
     proxy.$modal.msgError("请选择一名员工");
     return;
   }
-  const managerId = selectedEmployee.value.userId || selectedEmployee.value.id;
+  const managerId = getEmployeeRowKey(selectedEmployee.value);
   form.value.managerId = managerId;
   form.value.managerNickname = selectedEmployee.value.nickname || selectedEmployee.value.empName || managerId;
   managerMap.value[managerId] = form.value.managerNickname;

@@ -146,7 +146,7 @@
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="是否启用" prop="status">
-          <el-radio-group v-model="form.status">
+          <el-radio-group v-model="form.status" :disabled="dialogMode === 'view'">
             <el-radio
               v-for="dict in common_yes_no"
               :key="dict.value"
