@@ -17,8 +17,8 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+      <el-form-item label="是否启用" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择是否启用" clearable style="width: 150px">
           <el-option
             v-for="dict in common_yes_no"
             :key="dict.value"

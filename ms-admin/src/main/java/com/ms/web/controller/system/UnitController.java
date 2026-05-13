@@ -107,8 +107,7 @@ public class UnitController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:unit:list')")
     @GetMapping("/mainUnitList")
-    public AjaxResult getMainUnitList()
-    {
+    public AjaxResult getMainUnitList() {
         return success(unitService.selectMainUnitList());
     }
 }

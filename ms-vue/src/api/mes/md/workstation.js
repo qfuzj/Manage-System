@@ -42,3 +42,11 @@ export function delWorkstation(id) {
     method: 'delete'
   })
 }
+
+// 获取自动生成编码
+export function getAutoWorkstationCode() {
+  return request({
+    url: '/system/code/getCode',
+    method: 'get'
+  })
+}

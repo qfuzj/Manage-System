@@ -5,15 +5,15 @@ import com.ms.system.domain.Workshop;
 
 /**
  * 车间Mapper接口
- * 
+ *
  * @author ms
  * @date 2026-05-12
  */
-public interface WorkshopMapper 
+public interface WorkshopMapper
 {
     /**
      * 查询车间
-     * 
+     *
      * @param id 车间主键
      * @return 车间
      */
@@ -21,7 +21,7 @@ public interface WorkshopMapper
 
     /**
      * 查询车间列表
-     * 
+     *
      * @param workshop 车间
      * @return 车间集合
      */
@@ -29,7 +29,7 @@ public interface WorkshopMapper
 
     /**
      * 新增车间
-     * 
+     *
      * @param workshop 车间
      * @return 结果
      */
@@ -37,7 +37,7 @@ public interface WorkshopMapper
 
     /**
      * 修改车间
-     * 
+     *
      * @param workshop 车间
      * @return 结果
      */
@@ -45,7 +45,7 @@ public interface WorkshopMapper
 
     /**
      * 删除车间
-     * 
+     *
      * @param id 车间主键
      * @return 结果
      */
@@ -53,9 +53,15 @@ public interface WorkshopMapper
 
     /**
      * 批量删除车间
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteWorkshopByIds(Long[] ids);
+
+    /**
+     * 查询车间名称列表
+     * @return 车间名称列表
+     */
+    List<Workshop> selectWorkshopNameList();
 }

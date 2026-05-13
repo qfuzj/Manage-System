@@ -42,3 +42,10 @@ export function delWorkshop(id) {
     method: 'delete'
   })
 }
+
+export function listWorkshopName(){
+  return request({
+    url: '/mes:md/workshop/listName',
+    method: 'get'
+  })
+}

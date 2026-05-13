@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ms.system.mapper.WorkshopMapper">
-    
+
     <resultMap type="Workshop" id="WorkshopResult">
         <result property="id"    column="id"    />
         <result property="workshopCode"    column="workshop_code"    />
@@ -23,18 +23,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectWorkshopList" parameterType="Workshop" resultMap="WorkshopResult">
         <include refid="selectWorkshopVo"/>
-        <where>  
+        <where>
             <if test="workshopCode != null  and workshopCode != ''"> and workshop_code = #{workshopCode}</if>
             <if test="workshopName != null  and workshopName != ''"> and workshop_name like concat('%', #{workshopName}, '%')</if>
             <if test="status != null "> and status = #{status}</if>
         </where>
     </select>
-    
+
     <select id="selectWorkshopById" parameterType="Long" resultMap="WorkshopResult">
         <include refid="selectWorkshopVo"/>
         where id = #{id}
     </select>
-        
+
+    <select id="selectWorkshopNameList" resultType="Workshop">
+        select * from base_workshop where status = 0
+    </select>
+
     <insert id="insertWorkshop" parameterType="Workshop" useGeneratedKeys="true" keyProperty="id">
         insert into base_workshop
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -82,7 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteWorkshopByIds" parameterType="String">
-        delete from base_workshop where id in 
+        delete from base_workshop where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

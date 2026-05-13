@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ms.system.mapper.ProcessMapper">
+    
+    <resultMap type="Process" id="ProcessResult">
+        <result property="id"    column="id"    />
+        <result property="processCode"    column="process_code"    />
+        <result property="processName"    column="process_name"    />
+        <result property="processDesc"    column="process_desc"    />
+        <result property="isActive"    column="is_active"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectProcessVo">
+        select id, process_code, process_name, process_desc, is_active, create_time, is_deleted from base_process
+    </sql>
+
+    <select id="selectProcessList" parameterType="Process" resultMap="ProcessResult">
+        <include refid="selectProcessVo"/>
+        <where>  
+            <if test="processCode != null  and processCode != ''"> and process_code = #{processCode}</if>
+            <if test="processName != null  and processName != ''"> and process_name like concat('%', #{processName}, '%')</if>
+            <if test="processDesc != null  and processDesc != ''"> and process_desc = #{processDesc}</if>
+            <if test="isActive != null "> and is_active = #{isActive}</if>
+        </where>
+    </select>
+    
+    <select id="selectProcessById" parameterType="Long" resultMap="ProcessResult">
+        <include refid="selectProcessVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertProcess" parameterType="Process" useGeneratedKeys="true" keyProperty="id">
+        insert into base_process
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="processCode != null and processCode != ''">process_code,</if>
+            <if test="processName != null and processName != ''">process_name,</if>
+            <if test="processDesc != null">process_desc,</if>
+            <if test="isActive != null">is_active,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="processCode != null and processCode != ''">#{processCode},</if>
+            <if test="processName != null and processName != ''">#{processName},</if>
+            <if test="processDesc != null">#{processDesc},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateProcess" parameterType="Process">
+        update base_process
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="processCode != null and processCode != ''">process_code = #{processCode},</if>
+            <if test="processName != null and processName != ''">process_name = #{processName},</if>
+            <if test="processDesc != null">process_desc = #{processDesc},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProcessById" parameterType="Long">
+        delete from base_process where id = #{id}
+    </delete>
+
+    <delete id="deleteProcessByIds" parameterType="String">
+        delete from base_process where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

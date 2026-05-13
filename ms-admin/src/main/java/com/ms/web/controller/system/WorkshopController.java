@@ -101,4 +101,11 @@ public class WorkshopController extends BaseController
     {
         return toAjax(workshopService.deleteWorkshopByIds(ids));
     }
+
+
+    @PreAuthorize("@ss.hasPermi('mes:md:workshop:list')")
+    @GetMapping("/listName")
+    public AjaxResult listWorkshopName(){
+        return success(workshopService.selectWorkshopNameList());
+    }
 }
